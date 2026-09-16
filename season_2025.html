@@ -1,0 +1,259 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>The Complex League Report 2025</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+            <style>
+                :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --subtext: #94a3b8; --accent: #38bdf8; --gold: #fbbf24; --silver: #e2e8f0; --bronze: #cd7f32; --red: #ef4444; --green: #22c55e; }
+                body { background-color: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; margin: 0; padding: 0; }
+                .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+                header { text-align: center; padding: 40px 20px; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); border-bottom: 1px solid #334155; }
+                h1 { margin: 0; font-size: 3rem; font-weight: 900; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: -1px; }
+                .subtitle { margin-top: 10px; color: var(--accent); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+
+                /* PAYOUT PODIUM */
+                .payout-section { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: -30px; margin-bottom: 50px; }
+                .payout-card { background: var(--card); border-radius: 20px; padding: 25px; width: 280px; text-align: center; position: relative; border: 1px solid #334155; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); transform: translateY(0); transition: transform 0.3s; }
+                .payout-card:hover { transform: translateY(-10px); }
+                .payout-card.gold { border-color: var(--gold); background: linear-gradient(180deg, rgba(251, 191, 36, 0.1) 0%, var(--card) 100%); transform: scale(1.1); z-index: 10; }
+                .payout-card.silver { border-color: var(--silver); }
+                .payout-card.bronze { border-color: var(--bronze); }
+
+                .payout-badge { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--card); border: 2px solid; padding: 5px 15px; border-radius: 20px; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+                .gold .payout-badge { color: var(--gold); border-color: var(--gold); box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+                .silver .payout-badge { color: var(--silver); border-color: var(--silver); }
+                .bronze .payout-badge { color: var(--bronze); border-color: var(--bronze); }
+
+                .payout-logo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #334155; background: #000; }
+                .gold .payout-logo { border-color: var(--gold); }
+                .payout-winner { font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 5px; }
+                .payout-team { color: var(--subtext); font-size: 0.9rem; margin-bottom: 10px; font-style: italic; }
+                .payout-stat { font-weight: 700; color: var(--accent); font-size: 1.1rem; }
+
+                h2 { margin-top: 60px; font-size: 1.8rem; border-left: 5px solid var(--accent); padding-left: 15px; color: var(--text); }
+                .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-top: 30px; }
+                .full-width { grid-column: 1 / -1; }
+                .card { background: var(--card); border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); border: 1px solid #334155; }
+                .card-header { font-size: 1.1rem; font-weight: 600; color: var(--subtext); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; }
+
+                .awards-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
+                .award-card { background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(56, 189, 248, 0)); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 20px; text-align: center; }
+                .award-icon { font-size: 2rem; margin-bottom: 10px; }
+                .award-title { color: var(--accent); font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
+                .award-winner { font-size: 1.5rem; font-weight: 800; margin: 5px 0; color: #fff; }
+                .award-desc { color: var(--subtext); font-size: 0.85rem; }
+
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                th { text-align: left; color: var(--subtext); padding: 12px; font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid #334155; }
+                td { padding: 14px 12px; border-bottom: 1px solid #334155; font-size: 0.95rem; white-space: nowrap; }
+                tr:last-child td { border-bottom: none; }
+                .highlight { color: var(--accent); font-weight: 700; }
+                .heatmap-container { overflow-x: auto; }
+                .heatmap-container table { min-width: 600px; }
+                .sticky-col { position: sticky; left: 0; background: var(--card); z-index: 10; border-right: 2px solid #334155; font-weight: bold; }
+                .chart-box { position: relative; height: 300px; width: 100%; }
+
+                @media (max-width: 768px) {
+                    .payout-section { margin-top: 20px; transform: scale(0.9); }
+                    .payout-card.gold { transform: scale(1); order: -1; width: 100%; }
+                    .payout-card { width: 100%; }
+                }
+            </style>
+        </head>
+        <body>
+            <header>
+                <div class="subtitle">State of the League Report</div>
+                <h1>The Complex League</h1>
+            </header>
+
+            <div class="container">
+                <!-- PAYOUT PODIUM -->
+                <div class="payout-section">
+                    
+            <div class="payout-card silver">
+                <div class="payout-badge">2nd Place (Silver)</div>
+                <img src="http://1.bp.blogspot.com/-06NpQFp-Cc0/T8_cfS3LoFI/AAAAAAAABS4/_8SoBCn-bD0/s1600/throwing-computer.gif" class="payout-logo">
+                <div class="payout-winner">Anthony Quihuis</div>
+                <div class="payout-team">The Fantasy Football Team</div>
+                <div class="payout-stat">Runner Up</div>
+            </div>
+            
+                    
+            <div class="payout-card gold">
+                <div class="payout-badge">Champion (Gold)</div>
+                <img src="https://g.espncdn.com/s/ffllm/logos/StarWarsTheForceAwakens-ToddDetwiler/ESPN_Star_Wars_16a.svg" class="payout-logo">
+                <div class="payout-winner">Ant Mergens</div>
+                <div class="payout-team">Punky Skunks</div>
+                <div class="payout-stat">Champion</div>
+            </div>
+            
+                    
+            <div class="payout-card bronze">
+                <div class="payout-badge">Highest Score (Payout)</div>
+                <img src="http://1.bp.blogspot.com/-06NpQFp-Cc0/T8_cfS3LoFI/AAAAAAAABS4/_8SoBCn-bD0/s1600/throwing-computer.gif" class="payout-logo">
+                <div class="payout-winner">Anthony Quihuis</div>
+                <div class="payout-team">The Fantasy Football Team</div>
+                <div class="payout-stat">185.32 pts (Wk 10)</div>
+            </div>
+            
+                </div>
+
+                <!-- SCATTER PLOT -->
+                <div class="card" style="margin-bottom: 40px;">
+                    <div class="card-header">
+                        <span>Luck vs. Skill (Points For vs. Points Against)</span>
+                        <span style="font-size:0.8rem; opacity:0.7">Quadrants based on League Avg</span>
+                    </div>
+                    <div class="chart-box" style="height: 500px;">
+                        <canvas id="scatterChart"></canvas>
+                    </div>
+                </div>
+
+                <h2>🏆 Major Awards</h2>
+                <div class="awards-row">
+                    <div class="award-card">
+                        <div class="award-icon">🌍</div>
+                        <div class="award-title">The Atlas Award</div>
+                        <div class="award-winner">Jahmyr Gibbs</div>
+                        <div class="award-desc">Carried Anthony Quihuis (52.5% share)</div>
+                    </div>
+                    <div class="award-card">
+                        <div class="award-icon">😤</div>
+                        <div class="award-title">The Bully</div>
+                        <div class="award-winner">Anthony Quihuis</div>
+                        <div class="award-desc">Beat Colin Stone by 93 pts</div>
+                    </div>
+                    <div class="award-card">
+                        <div class="award-icon">🍀</div>
+                        <div class="award-title">Lucky Duck</div>
+                        <div class="award-winner">Anthony Quihuis</div>
+                        <div class="award-desc">Won scoring only 105 pts</div>
+                    </div>
+                </div>
+
+                <h2>📈 League Statistics</h2>
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-header">🚀 Top 10 High Scores</div>
+                        <table><thead><tr><th>#</th><th>Owner</th><th>Score</th><th>Week</th></tr></thead><tbody><tr><td>1</td><td class=''>Anthony Quihuis</td><td class='highlight'>185.32</td><td class=''>Wk 10</td></tr><tr><td>2</td><td class=''>Ryan Bartman</td><td class='highlight'>183.64</td><td class=''>Wk 6</td></tr><tr><td>3</td><td class=''>Vincent Castellano</td><td class='highlight'>181.30</td><td class=''>Wk 15</td></tr><tr><td>4</td><td class=''>Ant Mergens</td><td class='highlight'>179.28</td><td class=''>Wk 12</td></tr><tr><td>5</td><td class=''>Ant Mergens</td><td class='highlight'>178.50</td><td class=''>Wk 7</td></tr><tr><td>6</td><td class=''>Tomas Gonzales</td><td class='highlight'>177.98</td><td class=''>Wk 11</td></tr><tr><td>7</td><td class=''>John Koch</td><td class='highlight'>174.34</td><td class=''>Wk 15</td></tr><tr><td>8</td><td class=''>John Koch</td><td class='highlight'>172.74</td><td class=''>Wk 4</td></tr><tr><td>9</td><td class=''>Ant Mergens</td><td class='highlight'>172.60</td><td class=''>Wk 9</td></tr><tr><td>10</td><td class=''>Matthew Wallace</td><td class='highlight'>171.40</td><td class=''>Wk 4</td></tr></tbody></table>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">🧠 Coach Efficiency (% Started)</div>
+                        <table><thead><tr><th>#</th><th>Owner</th><th>%</th><th>Wasted Pts</th></tr></thead><tbody><tr><td>1</td><td class=''>Vincent Castellano</td><td class='highlight'>83.2%</td><td class=''>403 pts</td></tr><tr><td>2</td><td class=''>John Koch</td><td class='highlight'>83.2%</td><td class=''>391 pts</td></tr><tr><td>3</td><td class=''>Colin Stone</td><td class='highlight'>82.8%</td><td class=''>385 pts</td></tr><tr><td>4</td><td class=''>Nicola D'Angelo</td><td class='highlight'>80.8%</td><td class=''>413 pts</td></tr><tr><td>5</td><td class=''>Anthony Quihuis</td><td class='highlight'>79.6%</td><td class=''>477 pts</td></tr><tr><td>6</td><td class=''>Ant Mergens</td><td class='highlight'>78.1%</td><td class=''>538 pts</td></tr><tr><td>7</td><td class=''>Carl Tickner</td><td class='highlight'>78.1%</td><td class=''>535 pts</td></tr><tr><td>8</td><td class=''>Daniel Grover</td><td class='highlight'>77.3%</td><td class=''>473 pts</td></tr><tr><td>9</td><td class=''>Ryan Bartman</td><td class='highlight'>76.7%</td><td class=''>608 pts</td></tr><tr><td>10</td><td class=''>Tomas Gonzales</td><td class='highlight'>76.6%</td><td class=''>585 pts</td></tr><tr><td>11</td><td class=''>Matthew Wallace</td><td class='highlight'>74.5%</td><td class=''>602 pts</td></tr><tr><td>12</td><td class=''>Clayton Stone</td><td class='highlight'>71.2%</td><td class=''>664 pts</td></tr></tbody></table>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">📉 Consistency (Std Dev)</div>
+                        <table><thead><tr><th>#</th><th>Owner</th><th>+/-</th></tr></thead><tbody><tr><td>1</td><td class=''>Daniel Grover</td><td class='highlight'>15.23</td></tr><tr><td>2</td><td class=''>Nicola D'Angelo</td><td class='highlight'>16.92</td></tr><tr><td>3</td><td class=''>Carl Tickner</td><td class='highlight'>18.51</td></tr><tr><td>4</td><td class=''>Clayton Stone</td><td class='highlight'>18.70</td></tr><tr><td>5</td><td class=''>Ryan Bartman</td><td class='highlight'>19.78</td></tr><tr><td>6</td><td class=''>Tomas Gonzales</td><td class='highlight'>21.61</td></tr><tr><td>7</td><td class=''>Vincent Castellano</td><td class='highlight'>22.10</td></tr><tr><td>8</td><td class=''>John Koch</td><td class='highlight'>23.88</td></tr><tr><td>9</td><td class=''>Colin Stone</td><td class='highlight'>24.86</td></tr><tr><td>10</td><td class=''>Matthew Wallace</td><td class='highlight'>25.41</td></tr><tr><td>11</td><td class=''>Ant Mergens</td><td class='highlight'>28.23</td></tr><tr><td>12</td><td class=''>Anthony Quihuis</td><td class='highlight'>29.88</td></tr></tbody></table>
+                    </div>
+                </div>
+
+                <h2>📊 Season Deep Dive</h2>
+                <div class="grid">
+                    <div class="card full-width">
+                        <div class="card-header">🔥 Weekly Scoring Heatmap</div>
+                        <div class='heatmap-container'><table><thead><tr><th>Owner</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th></tr></thead><tbody><tr><td class='sticky-col'>Ryan Bartman</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>154</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>130</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>136</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>151</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>146</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>183</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>118</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>116</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>129</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>133</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>130</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>114</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>149</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>104</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>126</td></tr><tr><td class='sticky-col'>Vincent Castellano</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>122</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>165</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>119</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>113</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>115</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>118</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>111</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>119</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>128</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>128</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>168</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>130</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>126</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>149</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>181</td></tr><tr><td class='sticky-col'>Ant Mergens</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>113</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>122</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>138</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>123</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>125</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>102</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>178</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>131</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>172</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>94</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>108</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>179</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>168</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>119</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>116</td></tr><tr><td class='sticky-col'>John Koch</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>113</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>113</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>124</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>172</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>153</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>129</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>157</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>108</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>120</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>126</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>125</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>104</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>107</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>105</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>174</td></tr><tr><td class='sticky-col'>Anthony Quihuis</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>108</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>160</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>163</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>135</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>149</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>107</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>154</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>143</td><td style='background-color:#ef4444; color:#000; font-weight:bold; font-size:0.8rem;'>82</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>185</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>91</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>105</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>107</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>113</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>118</td></tr><tr><td class='sticky-col'>Tomas Gonzales</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>124</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>133</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>131</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>138</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>119</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>121</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>121</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>170</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>117</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>96</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>177</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>125</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>101</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>121</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>120</td></tr><tr><td class='sticky-col'>Carl Tickner</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>114</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>138</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>132</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>144</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>142</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>122</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>130</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>110</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>116</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>147</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>88</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>150</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>99</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>128</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>144</td></tr><tr><td class='sticky-col'>Colin Stone</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>106</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>147</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>110</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>108</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>155</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>116</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>168</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>160</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>123</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>92</td><td style='background-color:#ef4444; color:#000; font-weight:bold; font-size:0.8rem;'>83</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>117</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>136</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>112</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>118</td></tr><tr><td class='sticky-col'>Matthew Wallace</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>97</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>106</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>103</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>171</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>109</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>154</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>130</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>99</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>147</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>133</td><td style='background-color:#ef4444; color:#000; font-weight:bold; font-size:0.8rem;'>79</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>93</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>110</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>100</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>121</td></tr><tr><td class='sticky-col'>Nicola D'Angelo</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>141</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>105</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>145</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>128</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>113</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>100</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>105</td><td style='background-color:#ef4444; color:#000; font-weight:bold; font-size:0.8rem;'>80</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>135</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>115</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>117</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>127</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>110</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>116</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>103</td></tr><tr><td class='sticky-col'>Clayton Stone</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>120</td><td style='background-color:#ef4444; color:#000; font-weight:bold; font-size:0.8rem;'>82</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>86</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>102</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>119</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>110</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>99</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>121</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>146</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>116</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>117</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>101</td><td style='background-color:#ef4444; color:#000; font-weight:bold; font-size:0.8rem;'>84</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>127</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>136</td></tr><tr><td class='sticky-col'>Daniel Grover</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>121</td><td style='background-color:#ef4444; color:#000; font-weight:bold; font-size:0.8rem;'>84</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>116</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>106</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>117</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>107</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>85</td><td style='background-color:#84cc16; color:#000; font-weight:bold; font-size:0.8rem;'>119</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>105</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>107</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>113</td><td style='background-color:#f97316; color:#000; font-weight:bold; font-size:0.8rem;'>89</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>101</td><td style='background-color:#eab308; color:#000; font-weight:bold; font-size:0.8rem;'>114</td><td style='background-color:#22c55e; color:#000; font-weight:bold; font-size:0.8rem;'>143</td></tr></tbody></table></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">⚡ Power Rankings (Vs. The Field)</div>
+                        <table><thead><tr><th>#</th><th>Owner</th><th>True Win %</th><th>Actual Rec</th></tr></thead><tbody><tr><td>1</td><td class=''>Ryan Bartman</td><td class='highlight'>65.5%</td><td class=''>8-7</td></tr><tr><td>2</td><td class=''>Vincent Castellano</td><td class='highlight'>63.6%</td><td class=''>11-4</td></tr><tr><td>3</td><td class=''>Carl Tickner</td><td class='highlight'>58.8%</td><td class=''>6-9</td></tr><tr><td>4</td><td class=''>Tomas Gonzales</td><td class='highlight'>57.0%</td><td class=''>11-4</td></tr><tr><td>5</td><td class=''>Ant Mergens</td><td class='highlight'>57.0%</td><td class=''>9-6</td></tr><tr><td>6</td><td class=''>John Koch</td><td class='highlight'>55.2%</td><td class=''>6-9</td></tr><tr><td>7</td><td class=''>Anthony Quihuis</td><td class='highlight'>52.7%</td><td class=''>10-5</td></tr><tr><td>8</td><td class=''>Colin Stone</td><td class='highlight'>46.1%</td><td class=''>8-7</td></tr><tr><td>9</td><td class=''>Nicola D'Angelo</td><td class='highlight'>41.2%</td><td class=''>5-10</td></tr><tr><td>10</td><td class=''>Matthew Wallace</td><td class='highlight'>37.6%</td><td class=''>6-9</td></tr><tr><td>11</td><td class=''>Clayton Stone</td><td class='highlight'>37.0%</td><td class=''>5-10</td></tr><tr><td>12</td><td class=''>Daniel Grover</td><td class='highlight'>27.9%</td><td class=''>5-10</td></tr></tbody></table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">🧬 Positional DNA (Points by Pos)</div>
+                        <div class="chart-box"><canvas id="posChart"></canvas></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">🛋️ Benchwarmers (Points Wasted)</div>
+                        <table><thead><tr><th>#</th><th>Owner</th><th>Pts Wasted</th></tr></thead><tbody><tr><td>1</td><td class=''>Clayton Stone</td><td class='highlight'>664</td></tr><tr><td>2</td><td class=''>Ryan Bartman</td><td class='highlight'>608</td></tr><tr><td>3</td><td class=''>Matthew Wallace</td><td class='highlight'>602</td></tr><tr><td>4</td><td class=''>Tomas Gonzales</td><td class='highlight'>585</td></tr><tr><td>5</td><td class=''>Ant Mergens</td><td class='highlight'>538</td></tr></tbody></table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">🍀 Luck Factor (Real - Exp Wins)</div>
+                        <table><thead><tr><th>#</th><th>Owner</th><th>Diff</th></tr></thead><tbody><tr><td>1</td><td class=''>Tomas Gonzales</td><td class='highlight'>2.45</td></tr><tr><td>2</td><td class=''>Anthony Quihuis</td><td class='highlight'>2.09</td></tr><tr><td>3</td><td class=''>Vincent Castellano</td><td class='highlight'>1.45</td></tr><tr><td>4</td><td class=''>Colin Stone</td><td class='highlight'>1.09</td></tr><tr><td>5</td><td class=''>Daniel Grover</td><td class='highlight'>0.82</td></tr><tr><td>6</td><td class=''>Ant Mergens</td><td class='highlight'>0.45</td></tr><tr><td>7</td><td class=''>Matthew Wallace</td><td class='highlight'>0.36</td></tr><tr><td>8</td><td class=''>Clayton Stone</td><td class='highlight'>-0.55</td></tr><tr><td>9</td><td class=''>Nicola D'Angelo</td><td class='highlight'>-1.18</td></tr><tr><td>10</td><td class=''>Ryan Bartman</td><td class='highlight'>-1.82</td></tr><tr><td>11</td><td class=''>John Koch</td><td class='highlight'>-2.27</td></tr><tr><td>12</td><td class=''>Carl Tickner</td><td class='highlight'>-2.82</td></tr></tbody></table>
+                    </div>
+                </div>
+
+                <h2>🏛️ Hall of Fame</h2>
+                <div class="grid">
+                    <div class="card full-width">
+                        <div class="card-header">💰 The Trophy Room (Payout History)</div>
+                         <table><thead><tr><th>#</th><th>Owner</th><th>1st</th><th>2nd</th><th>Score King</th><th>Total Payouts</th></tr></thead><tbody><tr><td>1</td><td class=''>Tomas Gonzales</td><td class=''>3</td><td class=''>1</td><td class=''>0</td><td class='highlight'>4</td></tr><tr><td>2</td><td class=''>Ryan Bartman</td><td class=''>2</td><td class=''>2</td><td class=''>1</td><td class='highlight'>5</td></tr><tr><td>3</td><td class=''>Nicola D'Angelo</td><td class=''>2</td><td class=''>2</td><td class=''>0</td><td class='highlight'>4</td></tr><tr><td>4</td><td class=''>Anthony Quihuis</td><td class=''>2</td><td class=''>1</td><td class=''>1</td><td class='highlight'>4</td></tr><tr><td>5</td><td class=''>Ant Mergens</td><td class=''>2</td><td class=''>1</td><td class=''>1</td><td class='highlight'>4</td></tr><tr><td>6</td><td class=''>John Koch</td><td class=''>2</td><td class=''>1</td><td class=''>1</td><td class='highlight'>4</td></tr><tr><td>7</td><td class=''>Vincent Castellano</td><td class=''>1</td><td class=''>2</td><td class=''>1</td><td class='highlight'>4</td></tr><tr><td>8</td><td class=''>Carl Tickner</td><td class=''>1</td><td class=''>1</td><td class=''>1</td><td class='highlight'>3</td></tr><tr><td>9</td><td class=''>Colin Stone</td><td class=''>0</td><td class=''>2</td><td class=''>1</td><td class='highlight'>3</td></tr><tr><td>10</td><td class=''>Matthew Wallace</td><td class=''>0</td><td class=''>1</td><td class=''>0</td><td class='highlight'>1</td></tr><tr><td>11</td><td class=''>Thomas Grover</td><td class=''>0</td><td class=''>1</td><td class=''>0</td><td class='highlight'>1</td></tr></tbody></table>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">📈 The Dynasty Timeline (Cumulative Wins)</div>
+                        <div class="chart-box" style="height:350px"><canvas id="timelineChart"></canvas></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">👑 Career Win % (Ranked)</div>
+                         <table><thead><tr><th>#</th><th>Owner</th><th>Rec</th><th>Win %</th></tr></thead><tbody><tr><td>1</td><td class=''>Kenny Terry</td><td class=''>26-15</td><td class='highlight'>63.4%</td></tr><tr><td>2</td><td class=''>Carl Tickner</td><td class=''>117-88</td><td class='highlight'>57.1%</td></tr><tr><td>3</td><td class=''>Ryan Bartman</td><td class=''>109-83</td><td class='highlight'>56.8%</td></tr><tr><td>4</td><td class=''>John Koch</td><td class=''>106-86</td><td class='highlight'>55.2%</td></tr><tr><td>5</td><td class=''>Matthew Wallace</td><td class=''>32-28</td><td class='highlight'>53.3%</td></tr><tr><td>6</td><td class=''>Ant Mergens</td><td class=''>109-96</td><td class='highlight'>53.2%</td></tr><tr><td>7</td><td class=''>Vincent Castellano</td><td class=''>108-97</td><td class='highlight'>52.7%</td></tr><tr><td>8</td><td class=''>Colin Stone</td><td class=''>108-97</td><td class='highlight'>52.7%</td></tr><tr><td>9</td><td class=''>Anthony Quihuis</td><td class=''>103-102</td><td class='highlight'>50.2%</td></tr><tr><td>10</td><td class=''>Tomas Gonzales</td><td class=''>101-104</td><td class='highlight'>49.3%</td></tr><tr><td>11</td><td class=''>Nicola D'Angelo</td><td class=''>96-109</td><td class='highlight'>46.8%</td></tr><tr><td>12</td><td class=''>Clayton Stone</td><td class=''>88-117</td><td class='highlight'>42.9%</td></tr><tr><td>13</td><td class=''>Thomas Grover</td><td class=''>42-62</td><td class='highlight'>40.4%</td></tr><tr><td>14</td><td class=''>Derrick Spinler</td><td class=''>5-8</td><td class='highlight'>38.5%</td></tr><tr><td>15</td><td class=''>Daniel Grover</td><td class=''>76-129</td><td class='highlight'>37.1%</td></tr><tr><td>16</td><td class=''>William Buse</td><td class=''>4-9</td><td class='highlight'>30.8%</td></tr></tbody></table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">🚀 Highest Scores Ever</div>
+                        <table><thead><tr><th>#</th><th>Owner</th><th>Score</th><th>Date</th></tr></thead><tbody><tr><td>1</td><td class=''>Colin Stone</td><td class='highlight'>233.90</td><td class=''>2020 Wk7</td></tr><tr><td>2</td><td class=''>Vincent Castellano</td><td class='highlight'>208.02</td><td class=''>2024 Wk15</td></tr><tr><td>3</td><td class=''>Ryan Bartman</td><td class='highlight'>205.54</td><td class=''>2019 Wk9</td></tr><tr><td>4</td><td class=''>John Koch</td><td class='highlight'>204.72</td><td class=''>2021 Wk5</td></tr><tr><td>5</td><td class=''>Carl Tickner</td><td class='highlight'>196.78</td><td class=''>2022 Wk11</td></tr><tr><td>6</td><td class=''>Vincent Castellano</td><td class='highlight'>196.78</td><td class=''>2021 Wk5</td></tr><tr><td>7</td><td class=''>Ant Mergens</td><td class='highlight'>195.20</td><td class=''>2023 Wk4</td></tr><tr><td>8</td><td class=''>Kenny Terry</td><td class='highlight'>193.28</td><td class=''>2021 Wk1</td></tr><tr><td>9</td><td class=''>Tomas Gonzales</td><td class='highlight'>192.08</td><td class=''>2019 Wk4</td></tr><tr><td>10</td><td class=''>Clayton Stone</td><td class='highlight'>191.42</td><td class=''>2023 Wk3</td></tr></tbody></table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">💸 The Philanthropists (0 Payouts)</div>
+                        <table><thead><tr><th>#</th><th>Owner</th><th>Seasons</th></tr></thead><tbody><tr><td>1</td><td class=''>Clayton Stone</td><td class='highlight'>15</td></tr><tr><td>2</td><td class=''>Daniel Grover</td><td class='highlight'>15</td></tr><tr><td>3</td><td class=''>Kenny Terry</td><td class='highlight'>3</td></tr><tr><td>4</td><td class=''>William Buse</td><td class='highlight'>1</td></tr><tr><td>5</td><td class=''>Derrick Spinler</td><td class='highlight'>1</td></tr></tbody></table>
+                    </div>
+                </div>
+
+                <div style="text-align:center; margin-top:50px; color:#666; font-size:0.8rem">
+                    Generated for The Complex League • 2026-01-01
+                </div>
+            </div>
+
+            <script>
+                Chart.register(ChartDataLabels);
+
+                // 1. SCATTER CHART (PF vs PA)
+                new Chart(document.getElementById('scatterChart'), {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Teams',
+                            data: [{"x": 1999.4199999999996, "y": 1727.08, "label": "Vincent Castellano"}, {"x": 1857.7599999999998, "y": 1944.24, "label": "Colin Stone"}, {"x": 1922.3000000000002, "y": 1810.9, "label": "Tomas Gonzales"}, {"x": 1746.6599999999999, "y": 1895.14, "label": "Nicola D'Angelo"}, {"x": 1673.08, "y": 1956.14, "label": "Clayton Stone"}, {"x": 1927.02, "y": 1772.36, "label": "Anthony Quihuis"}, {"x": 1633.1200000000001, "y": 1901.36, "label": "Daniel Grover"}, {"x": 1994.64, "y": 1773.9, "label": "Ant Mergens"}, {"x": 1913.26, "y": 1896.44, "label": "Carl Tickner"}, {"x": 1760.0800000000002, "y": 1919.38, "label": "Matthew Wallace"}, {"x": 1938.6399999999999, "y": 2006.52, "label": "John Koch"}, {"x": 2027.7600000000002, "y": 1790.28, "label": "Ryan Bartman"}],
+                            backgroundColor: '#38bdf8',
+                            pointRadius: 6, pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            datalabels: { align: 'top', offset: 4, color: '#94a3b8', font: {size: 10} },
+                            tooltip: { callbacks: { label: function(ctx) { return ctx.raw.label + " (PF: " + ctx.raw.x + ", PA: " + ctx.raw.y + ")"; } } },
+                            annotation: { annotations: { 
+                                line1: { type: 'line', yMin: 1866.1450000000002, yMax: 1866.1450000000002, borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1 }, 
+                                line2: { type: 'line', xMin: 1866.1449999999998, xMax: 1866.1449999999998, borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1 },
+                                label1: { type: 'label', xValue: 1866.1449999999998*1.1, yValue: 1866.1450000000002*0.8, content: 'The Juggernaut (Good/Lucky)', color: 'rgba(255,255,255,0.3)' },
+                                label2: { type: 'label', xValue: 1866.1449999999998*1.1, yValue: 1866.1450000000002*1.2, content: 'The Grinder (Good/Unlucky)', color: 'rgba(255,255,255,0.3)' },
+                                label3: { type: 'label', xValue: 1866.1449999999998*0.9, yValue: 1866.1450000000002*1.2, content: 'The Punching Bag (Bad/Unlucky)', color: 'rgba(255,255,255,0.3)' },
+                                label4: { type: 'label', xValue: 1866.1449999999998*0.9, yValue: 1866.1450000000002*0.8, content: 'The Fraud (Bad/Lucky)', color: 'rgba(255,255,255,0.3)' }
+                            } }
+                        },
+                        scales: { 
+                            x: { title: {display:true, text:'Points For (Skill)', color:'#94a3b8'}, grid: {color:'#334155'} }, 
+                            y: { title: {display:true, text:'Points Against (Bad Luck)', color:'#94a3b8'}, grid: {color:'#334155'} } 
+                        }
+                    }
+                });
+
+                // 2. POSITIONAL
+                new Chart(document.getElementById('posChart'), { type: 'bar', data: {"labels": ["Vincent Castellano", "Colin Stone", "Tomas Gonzales", "Nicola D'Angelo", "Clayton Stone", "Anthony Quihuis", "Daniel Grover", "Ant Mergens", "Carl Tickner", "Matthew Wallace", "John Koch", "Ryan Bartman"], "datasets": [{"label": "QB", "data": [269.21999999999997, 237.59999999999997, 357.79999999999995, 286.36000000000007, 251.77999999999997, 226.02, 253.90000000000003, 271.44, 222.04000000000005, 337.38000000000005, 206.94, 279.06], "backgroundColor": "#ef476f"}, {"label": "RB", "data": [667.2000000000002, 638.86, 390.2, 454.89999999999986, 583.0000000000001, 797.9, 426.62000000000006, 639.9000000000001, 234.60000000000002, 516.9, 427.90000000000003, 565.2], "backgroundColor": "#06d6a0"}, {"label": "WR", "data": [510.09999999999997, 615.8000000000003, 670.5000000000001, 640.0, 529.8000000000002, 536.3, 556.0, 746.0000000000001, 1037.22, 638.0999999999998, 679.1999999999998, 559.8], "backgroundColor": "#118ab2"}, {"label": "TE", "data": [266.9, 132.5, 294.8, 154.4, 154.5, 151.8, 113.59999999999998, 118.3, 123.39999999999999, 108.69999999999999, 340.0, 330.70000000000005], "backgroundColor": "#ffd166"}, {"label": "D/ST", "data": [156.0, 110.0, 99.0, 81.0, 60.0, 90.0, 121.0, 101.0, 122.0, 55.0, 123.0, 143.0], "backgroundColor": "#073b4c"}]}, options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: {display:false} }, scales: { x: {stacked: true}, y: {stacked: true, display: false} } } });
+
+                // 3. TIMELINE
+                new Chart(document.getElementById('timelineChart'), { type: 'line', data: {"labels": [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025], "datasets": [{"label": "Vincent Castellano", "data": [5, 14, 20, 28, 34, 40, 47, 52, 61, 68, 79, 84, 89, 97, 108], "borderColor": "#e63946", "fill": false, "tension": 0.3}, {"label": "Colin Stone", "data": [6, 12, 21, 29, 37, 48, 57, 63, 66, 74, 82, 90, 95, 100, 108], "borderColor": "#f1faee", "fill": false, "tension": 0.3}, {"label": "Tomas Gonzales", "data": [6, 9, 15, 22, 28, 33, 41, 49, 57, 58, 62, 68, 78, 90, 101], "borderColor": "#a8dadc", "fill": false, "tension": 0.3}, {"label": "Nicola D'Angelo", "data": [11, 15, 21, 30, 38, 41, 47, 55, 60, 68, 77, 81, 87, 91, 96], "borderColor": "#457b9d", "fill": false, "tension": 0.3}, {"label": "Clayton Stone", "data": [5, 12, 20, 25, 30, 35, 41, 44, 51, 57, 64, 71, 77, 83, 88], "borderColor": "#1d3557", "fill": false, "tension": 0.3}, {"label": "Anthony Quihuis", "data": [10, 15, 19, 24, 29, 40, 45, 52, 59, 66, 71, 81, 89, 93, 103], "borderColor": "#fb8500", "fill": false, "tension": 0.3}, {"label": "Daniel Grover", "data": [8, 17, 20, 23, 24, 28, 32, 36, 39, 45, 49, 55, 62, 71, 76], "borderColor": "#ffb703", "fill": false, "tension": 0.3}, {"label": "Ant Mergens", "data": [8, 17, 21, 28, 36, 45, 50, 57, 62, 69, 80, 85, 94, 100, 109], "borderColor": "#8ecae6", "fill": false, "tension": 0.3}, {"label": "Carl Tickner", "data": [9, 17, 21, 29, 37, 44, 53, 62, 71, 78, 81, 92, 102, 111, 117], "borderColor": "#219ebc", "fill": false, "tension": 0.3}, {"label": "Matthew Wallace", "data": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 21, 26, 32], "borderColor": "#023047", "fill": false, "tension": 0.3}, {"label": "John Koch", "data": [0, 9, 20, 28, 31, 38, 46, 54, 63, 65, 76, 83, 90, 100, 106], "borderColor": "#ffb4a2", "fill": false, "tension": 0.3}, {"label": "Ryan Bartman", "data": [0, 4, 13, 20, 29, 35, 40, 49, 54, 66, 72, 84, 89, 101, 109], "borderColor": "#e5989b", "fill": false, "tension": 0.3}, {"label": "Kenny Terry", "data": [0, 0, 0, 0, 0, 0, 0, 0, 8, 15, 26, 26, 26, 26, 26], "borderColor": "#b5838d", "fill": false, "tension": 0.3}, {"label": "Thomas Grover", "data": [1, 6, 14, 17, 28, 32, 38, 42, 42, 42, 42, 42, 42, 42, 42], "borderColor": "#6d6875", "fill": false, "tension": 0.3}, {"label": "William Buse", "data": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4], "borderColor": "#e63946", "fill": false, "tension": 0.3}, {"label": "Derrick Spinler", "data": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5], "borderColor": "#f1faee", "fill": false, "tension": 0.3}]}, options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: {display:false} }, elements: { point: {radius: 0, hitRadius: 10} }, interaction: { mode: 'index', intersect: false }, scales: { y: {grid: {color:'#334155'}} } } });
+            </script>
+        </body>
+        </html>
+        
